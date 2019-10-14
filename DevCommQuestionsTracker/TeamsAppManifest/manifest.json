@@ -47,7 +47,8 @@
           "initialRun": false,
           "fetchTask": true,
           "context": [
-            "message"
+            "message",
+			"compose"
           ],
           "parameters": [
             {
