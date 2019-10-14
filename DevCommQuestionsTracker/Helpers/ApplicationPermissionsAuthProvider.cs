@@ -22,6 +22,7 @@ namespace DevCommQuestionsTracker.Helpers
         //private string tenantId = ConfigurationManager.AppSettings["ida:GraphScopes"];
 
         //private static readonly SampleAuthProvider instance = new SampleAuthProvider();
+        //private ApplicationPermissionsAuthProvider() { }
 
         //public static SampleAuthProvider Instance
         //{
