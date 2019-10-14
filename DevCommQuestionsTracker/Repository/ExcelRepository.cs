@@ -23,7 +23,9 @@ namespace DevCommQuestionsTracker.Repository
         public async Task<List<Question>> GetAllQuestionAsync()
         {
             var token = await _authProvider.GetAccessTokenAsync();
-            throw new NotImplementedException();
+            var allQuestiosn = await ExcelApiHelper.GetQuestions(token);
+            return allQuestiosn;
+                 
         }
 
         public async  Task<List<Question>> GetAllQuestionAsync(Expression<Func<Question, bool>> predicate)

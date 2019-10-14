@@ -22,7 +22,6 @@ namespace DevCommQuestionsTracker.Helpers
         //private string tenantId = ConfigurationManager.AppSettings["ida:GraphScopes"];
 
         //private static readonly SampleAuthProvider instance = new SampleAuthProvider();
-        private ApplicationPermissionsAuthProvider() { }
 
         //public static SampleAuthProvider Instance
         //{
@@ -36,7 +35,7 @@ namespace DevCommQuestionsTracker.Helpers
         public async Task<string> GetAccessTokenAsync()
         {
             // TODO: Fetch details from App Config.
-            string tenant= "", appId = "", appSecret = "";
+            string tenant= "blrdev.onmicrosoft.com", appId = "9235c421-99fe-4fa3-8d3e-256712544d92", appSecret = "Gn10B.GOSD9H9ARDA%2Fj%3FnlNXy%40dfNn%40%2F";
             string response = await POST($"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token",
                               $"grant_type=client_credentials&client_id={appId}&client_secret={appSecret}"
                               + "&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default");
