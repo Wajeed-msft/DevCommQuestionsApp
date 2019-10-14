@@ -12,7 +12,7 @@ using Microsoft.Bot.Schema;
 using Microsoft.Bot.Schema.Teams;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
+using Microsoft.Extensions.Configuration;
 namespace Microsoft.DevCommQuestionsTracker.Bots
 {
     /*
@@ -23,11 +23,15 @@ namespace Microsoft.DevCommQuestionsTracker.Bots
     public class QuestionsTrackerBot : TeamsActivityHandler
     {
         private readonly IQuestionsRepository _repository;
-
+        //public readonly IConfiguration configuration;
         public QuestionsTrackerBot( IQuestionsRepository questionsRepository)
         {
             _repository = questionsRepository;
         }
+        //public QuestionsTrackerBot(IConfiguration config)
+        //{
+        //    configuration = config;
+        //}
 
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
@@ -37,7 +41,7 @@ namespace Microsoft.DevCommQuestionsTracker.Bots
         protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionFetchTaskAsync(ITurnContext<IInvokeActivity> turnContext, MessagingExtensionQuery query, CancellationToken cancellationToken)
         {
             // Consturct and send creat new task.
-            return AdaptiveCardHelper.CreateTaskModuleAdaptiveCardResponse();
+            return AdaptiveCardHelper.CreateTaskModuleAdaptiveCardResponse(turnContext);
         }
 
         protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionSubmitActionAsync(ITurnContext<IInvokeActivity> turnContext, MessagingExtensionAction action, CancellationToken cancellationToken)
@@ -50,7 +54,8 @@ namespace Microsoft.DevCommQuestionsTracker.Bots
         protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionBotMessagePreviewEditAsync(ITurnContext<IInvokeActivity> turnContext, MessagingExtensionAction action, CancellationToken cancellationToken)
         {
             var submitData = action.ToSubmitExampleData();
-            return AdaptiveCardHelper.CreateTaskModuleAdaptiveCardResponse(
+            
+            return AdaptiveCardHelper.CreateTaskModuleAdaptiveCardResponse(turnContext,
                                                         submitData.Question,
                                                         bool.Parse(submitData.MultiSelect),
                                                         submitData.Option1,
