@@ -1,0 +1,86 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.5",
+  "version": "1.0",
+  "id": "9235c421-99fe-4fa3-8d3e-256712544d92",
+  "packageName": "com.teams.questions.tracker",
+  "developer": {
+    "name": "Microsoft",
+    "websiteUrl": "https://www.microsoft.com",
+    "privacyUrl": "https://www.teams.com/privacy",
+    "termsOfUseUrl": "https://www.teams.com/termsofuser"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Questions Tracker",
+    "full": "Helps to track queries posted on developer community channels."
+  },
+  "description": {
+    "short": "App to track questions.",
+    "full": "App to track questions present in Developer Support Channel."
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "9235c421-99fe-4fa3-8d3e-256712544d92",
+      "scopes": [
+        "personal",
+        "team"
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "composeExtensions": [
+    {
+      "botId": "9235c421-99fe-4fa3-8d3e-256712544d92",
+      "canUpdateConfiguration": false,
+      "commands": [
+        {
+          "id": "createWithPreview",
+          "type": "action",
+          "title": "Track New Question",
+          "description": "Saves question in backend for tracking.",
+          "initialRun": false,
+          "fetchTask": true,
+          "context": [
+            "message"
+          ],
+          "parameters": [
+            {
+              "name": "param",
+              "title": "param",
+              "description": ""
+            }
+          ]
+        },
+        {
+          "id": "updateQuestion",
+          "type": "action",
+          "title": "Update Question",
+          "description": "Saves question in backend for tracking.",
+          "initialRun": false,
+          "fetchTask": true,
+          "context": [
+            "message"
+          ],
+          "parameters": [
+            {
+              "name": "param",
+              "title": "param",
+              "description": ""
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": []
+}
