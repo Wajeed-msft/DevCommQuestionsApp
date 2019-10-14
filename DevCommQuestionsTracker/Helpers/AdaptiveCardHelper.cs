@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using System.Configuration;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
+using static DevCommQuestionsTracker.Helpers.Common;
 
 namespace Microsoft.DevCommQuestionsTracker
 {
@@ -36,7 +37,8 @@ namespace Microsoft.DevCommQuestionsTracker
 
         public static MessagingExtensionActionResponse CreateTaskModuleAdaptiveCardResponse(ITurnContext<IInvokeActivity> turnContext,string userText = null, bool isMultiSelect = true, string option1 = null, string option2 = null, string option3 = null)
         {
-            var details = JsonConvert.DeserializeObject<Question>(turnContext.Activity.Value.ToString());
+            var details = JsonConvert.DeserializeObject<Value>(turnContext.Activity.Value.ToString());
+            //var tilte = JsonConvert.DeserializeObject<Content>(details.messagePayload.body.content.ToString());
             var module = "Bots,Tabs,Adaptive Card,Connector,Message Extension,Webhooks,Teams client,Teams feature issue,Third party app,Teams feature support,Third Party Apps,Teams feature request,Calling and Meeting,Trello,TeamsUI,Teams Framework,User Presence API, Authentication,GraphAPI,VSTS Apps,Actionable messages,Activity Feed,App Distribution,App Store, App Studio, Coortana Integration,DeepLink,Doc-Bug,Doc-Suggestion,Microsoft Apps,Microsoft Flow, Mobile Client, Notification Only Bots,Powershell,OtherFramework,QnA Maker,SHarePoint,TaskModule,Sideloading,Skype For business,TeamsBotSDK,TeamsJSSDK";
             var assignedTo = "Wajeed Shaikh (Bangalore),Gousia Begum(Bangalore),Trinetra Kumar(Bangalore),Abhijit Jodhbhavi(Bangalore),Subhashish Pani(Bangalore)";
             var questiontype = "Development,TeamsProduct,MicrosoftBuildApps";
