@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -249,8 +248,8 @@ namespace DevCommQuestionsTracker.Helpers
                     if (name.Contains("Backlog-TechnicalQueries.xlsx"))
                     {
                         var fileId = (string)file["id"];
-                        return  "https://graph.microsoft.com/v1.0/sites/3212a3eb-05f8-4d5a-a459-df30d0cca4c3/drive/items/" + fileId + "/workbook/worksheets('Current')/";
-                        
+                        return "https://graph.microsoft.com/v1.0/sites/3212a3eb-05f8-4d5a-a459-df30d0cca4c3/drive/items/" + fileId + "/workbook/worksheets('Current')/";
+
                     }
                 }
 
@@ -273,7 +272,7 @@ namespace DevCommQuestionsTracker.Helpers
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 // New code:
-                HttpResponseMessage response = await client.GetAsync(resourcePath+ "tables('Active_Questions')/Rows");
+                HttpResponseMessage response = await client.GetAsync(resourcePath + "tables('Active_Questions')/Rows");
                 if (response.IsSuccessStatusCode)
                 {
                     string resultString = await response.Content.ReadAsStringAsync();
@@ -316,7 +315,10 @@ namespace DevCommQuestionsTracker.Helpers
                     {
                         Question question = new Question()
                         {
-                            Id = stringArray[0]
+                            Id = stringArray[0],
+                            PostedDate = DateTime.FromOADate( double.Parse(stringArray[1])),
+                            Title = stringArray[3]
+
                         };
                         //     stringArray[0],
                         //     stringArray[1],
@@ -342,200 +344,41 @@ namespace DevCommQuestionsTracker.Helpers
 
         }
 
-        public static async Task<Question> CreateToDoItem(
+        public static async Task<Question> AddNewQuestionInExcel(
                                                  string accessToken,
-                                                 string question,
-                                                 string forum,
-                                                 string assignedTo,
-                                                 string module,
-                                                 string percentComplete,
-                                                 string postedDate,
-                                                 string endDate,
-                                                 string comments)
+                                                 Question question)
         {
             Question newTodoItem = new Question();
 
             string id = Guid.NewGuid().ToString();
 
-            var forumString = "";
+            var forumString = question.Forum.ToString();
 
-            switch (forum)
-            {
-                case "1":
-                    forumString = "Email";
-                    break;
-                case "2":
-                    forumString = "Github";
-                    break;
-                case "3":
-                    forumString = "StackOverflow";
-                    break;
-                case "4":
-                    forumString = "TechCommunity";
-                    break;
-                case "5":
-                    forumString = "MicroStack";
-                    break;
-                case "6":
-                    forumString = "TeamsPost";
-                    break;
-            }
+            var assignedToString = question.AssignedTo;
 
-            var assignedToString = "";
-            switch (assignedTo)
-            {
-                case "1":
-                    assignedToString = "Wajeed";
-                    break;
-                case "2":
-                    assignedToString = "Gousia";
-                    break;
-                case "3":
-                    assignedToString = "Trinetra";
-                    break;
-                case "4":
-                    assignedToString = "Abhijit";
-                    break;
-                case "5":
-                    assignedToString = "Subhashish";
-                    break;
-            }
+            var moduleString = question.Module;
 
-            var moduleString = "";
-
-            switch (module)
-            {
-                case "1":
-                    moduleString = "Bots";
-                    break;
-                case "2":
-                    moduleString = "Tabs";
-                    break;
-                case "3":
-                    moduleString = "Adaptive card";
-                    break;
-                case "4":
-                    moduleString = "Connector";
-                    break;
-                case "5":
-                    moduleString = "Message Extension";
-                    break;
-                case "6":
-                    moduleString = "Webhook";
-                    break;
-                case "7":
-                    moduleString = "Teams Client";
-                    break;
-                case "8":
-                    moduleString = "Team feature issue";
-                    break;
-                case "9":
-                    moduleString = "Third Party Apps";
-                    break;
-                case "10":
-                    moduleString = "Teams Support";
-                    break;
-                case "11":
-                    moduleString = "Calling and Meeting";
-                    break;
-                case "12":
-                    moduleString = "Trello";
-                    break;
-                case "13":
-                    moduleString = "Teams UI";
-                    break;
-                case "14":
-                    moduleString = "Teams Framework";
-                    break;
-                case "15":
-                    moduleString = "User Present API";
-                    break;
-                case "16":
-                    moduleString = "AUtrhentication";
-                    break;
-                case "17":
-                    moduleString = "Graph API";
-                    break;
-                case "18":
-                    moduleString = "VSTS Apps";
-                    break;
-                case "19":
-                    moduleString = "Actionable Messages";
-                    break;
-                case "20":
-                    moduleString = "Activity Field";
-                    break;
-                case "21":
-                    moduleString = "App Distribution";
-                    break;
-                case "22":
-                    moduleString = "App Store";
-                    break;
-                case "23":
-                    moduleString = "App Studio";
-                    break;
-                case "24":
-                    moduleString = "Cortana Integration";
-                    break;
-                case "25":
-                    moduleString = "Deep Link";
-                    break;
-                case "26":
-                    moduleString = "Doc-Bug";
-                    break;
-                case "27":
-                    moduleString = "Doc-Suggestion";
-                    break;
-                case "28":
-                    moduleString = "In-progress";
-                    break;
-                case "29":
-                    moduleString = "Activity Field";
-                    break;
-                case "30":
-                    moduleString = "Microsoft Apps";
-                    break;
-                case "31":
-                    moduleString = "Microsoft Flow";
-                    break;
-                case "32":
-                    moduleString = "Mobile Client";
-                    break;
-                case "33":
-                    moduleString = "Notification Only Bots";
-                    break;
-                case "34":
-                    moduleString = "Powershell";
-                    break;
-                case "35":
-                    moduleString = "QnA Maker";
-                    break;
-                case "36":
-                    moduleString = "Sharepoint";
-                    break;
-                case "37":
-                    moduleString = "Task Module";
-                    break;
-                case "38":
-                    moduleString = "Sideloading";
-                    break;
-                case "39":
-                    moduleString = "Skype for business(SFB)";
-                    break;
-                case "40":
-                    moduleString = "Teams Bot SDK";
-                    break;
-
-            }
             using (var client = new HttpClient())
             {
                 var resourcePath = await GetFilePath(accessToken);
-                client.BaseAddress = new Uri(resourcePath);
+                // client.BaseAddress = new Uri(resourcePath);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 using (var request = new HttpRequestMessage(HttpMethod.Post, resourcePath))
                 {
                     //Create two-dimensional array to hold the row values to be serialized into json
-                    object[,] valuesArray = new object[1, 9] { { id, question, percentComplete.ToString(), forumString, assignedToString, moduleString, postedDate, endDate, comments } };
+                    object[,] valuesArray = new object[1, 11] {
+                            { 
+                            question.Id,
+                            question.PostedDate.ToString(),
+                            null,
+                            question.Title,
+                            question.Type.ToString(),
+                            question.SubType.ToString(),
+                            question.Forum,
+                            question.Module,
+                            question.AssignedTo,
+                            question.Status.ToString(),
+                            question.Comment } };
 
                     //Create a container for the request body to be serialized
                     RequestBodyHelper requestBodyHelper = new RequestBodyHelper();
@@ -549,7 +392,7 @@ namespace DevCommQuestionsTracker.Helpers
                     request.Content = new StringContent(postPayload, System.Text.Encoding.UTF8);
 
 
-                    using (HttpResponseMessage response = await client.PostAsync("tables('Active_Questions')/rows", request.Content))
+                    using (HttpResponseMessage response = await client.PostAsync(resourcePath + "tables('Active_Questions')/rows", request.Content))
                     {
                         if (response.IsSuccessStatusCode)
                         {

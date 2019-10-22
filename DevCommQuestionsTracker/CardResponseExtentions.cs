@@ -24,9 +24,9 @@ namespace Microsoft.DevCommQuestionsTracker
                             Content = card,
                             ContentType = AdaptiveCard.ContentType,
                         },
-                        Height = 450,
-                        Width = 500,
-                        Title = "Task Module Fetch Example",
+                        Height = 500,
+                        Width = 600,
+                        Title = "Track new question",
                     },
                 },
             };

@@ -13,6 +13,9 @@ using Microsoft.Bot.Schema.Teams;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Configuration;
+using DevCommQuestionsTracker.Models;
+using System.Linq;
+
 namespace Microsoft.DevCommQuestionsTracker.Bots
 {
     /*
@@ -41,57 +44,73 @@ namespace Microsoft.DevCommQuestionsTracker.Bots
         protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionFetchTaskAsync(ITurnContext<IInvokeActivity> turnContext, MessagingExtensionQuery query, CancellationToken cancellationToken)
         {
             // Consturct and send creat new task.
+            //var allQuestiosn = await _repository.GetAllQuestionAsync();
+            // var existingQuestion = allQuestiosn.FirstOrDefault(q => q.Id == turnContext.Activity.Conversation.Id);
             return AdaptiveCardHelper.CreateTaskModuleAdaptiveCardResponse(turnContext);
         }
 
         protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionSubmitActionAsync(ITurnContext<IInvokeActivity> turnContext, MessagingExtensionAction action, CancellationToken cancellationToken)
         {
-            var submittedData = JsonConvert.DeserializeObject<SubmitExampleData>(action.Data.ToString());
-            var adaptiveCard = submittedData.ToAdaptiveCard();
-            return adaptiveCard.ToMessagingExtensionBotMessagePreviewResponse();
-        }
-
-        protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionBotMessagePreviewEditAsync(ITurnContext<IInvokeActivity> turnContext, MessagingExtensionAction action, CancellationToken cancellationToken)
-        {
-            var submitData = action.ToSubmitExampleData();
-            
-            return AdaptiveCardHelper.CreateTaskModuleAdaptiveCardResponse(turnContext,
-                                                        submitData.Question,
-                                                        bool.Parse(submitData.MultiSelect),
-                                                        submitData.Option1,
-                                                        submitData.Option2,
-                                                        submitData.Option3);
-        }
-
-        protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionBotMessagePreviewSendAsync(ITurnContext<IInvokeActivity> turnContext, MessagingExtensionAction action, CancellationToken cancellationToken)
-        {
-            var submitData = action.ToSubmitExampleData();
-            var adaptiveCard = submitData.ToAdaptiveCard();
-            var responseActivity = Activity.CreateMessageActivity();
-            Attachment attachment = new Attachment()
+            var questionData = JsonConvert.DeserializeObject<QuestionData>(action.Data.ToString());
+            var question = new Question()
             {
-                ContentType = AdaptiveCard.ContentType,
-                Content = adaptiveCard,
+                Id = questionData.messageId,
+                AssignedTo = questionData.AssignedTo,
+                Comment = questionData.Comments,
+                Forum = questionData.Forum,
+                Module = questionData.Module,
+                Title = questionData.Title,
+                PostedDate = DateTime.Parse(questionData.PostedDate),
+                Status = (Status)Enum.Parse(typeof(Status), questionData.Status),
+                Type = (QuestionType)Enum.Parse(typeof(QuestionType), questionData.QuestionType),
+                SubType = (QuestionSubType)Enum.Parse(typeof(QuestionSubType), questionData.QuestionSubType),                
             };
-            responseActivity.Attachments.Add(attachment);
-            try
-            {
-                // Send to channel where messaging extension invoked.
-                var channelId = turnContext.Activity.TeamsGetChannelId();
-                await turnContext.TeamsCreateConversationAsync(channelId, responseActivity);
+            await _repository.AddOrUpdateQuestionAsync(questionData.messageId, question);
 
-                // Send card to "General" channel.
-                var teamDetails = await TeamsInfo.GetTeamDetailsAsync(turnContext);
-                await turnContext.TeamsCreateConversationAsync(teamDetails.Id, responseActivity);
-            }
-            catch (Exception ex)
-            {
-                // In group chat or personal scope..
-                await turnContext.SendActivityAsync($"In Group Chat or Personal Teams scope. Sending card to compose-only.");
-            }
-
-            return adaptiveCard.ToComposeExtensionResultResponse();
+            return new MessagingExtensionActionResponse() {  Task = null, ComposeExtension = null };
         }
+
+        //protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionBotMessagePreviewEditAsync(ITurnContext<IInvokeActivity> turnContext, MessagingExtensionAction action, CancellationToken cancellationToken)
+        //{
+        //    var submitData = action.ToSubmitExampleData();
+            
+        //    return AdaptiveCardHelper.CreateTaskModuleAdaptiveCardResponse(turnContext,
+        //                                                submitData.Question,
+        //                                                bool.Parse(submitData.MultiSelect),
+        //                                                submitData.Option1,
+        //                                                submitData.Option2,
+        //                                                submitData.Option3);
+        //}
+
+        //protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionBotMessagePreviewSendAsync(ITurnContext<IInvokeActivity> turnContext, MessagingExtensionAction action, CancellationToken cancellationToken)
+        //{
+        //    var submitData = action.ToSubmitExampleData();
+        //    var adaptiveCard = submitData.ToAdaptiveCard();
+        //    var responseActivity = Activity.CreateMessageActivity();
+        //    Attachment attachment = new Attachment()
+        //    {
+        //        ContentType = AdaptiveCard.ContentType,
+        //        Content = adaptiveCard,
+        //    };
+        //    responseActivity.Attachments.Add(attachment);
+        //    try
+        //    {
+        //        // Send to channel where messaging extension invoked.
+        //        var channelId = turnContext.Activity.TeamsGetChannelId();
+        //        await turnContext.TeamsCreateConversationAsync(channelId, responseActivity);
+
+        //        // Send card to "General" channel.
+        //        var teamDetails = await TeamsInfo.GetTeamDetailsAsync(turnContext);
+        //        await turnContext.TeamsCreateConversationAsync(teamDetails.Id, responseActivity);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // In group chat or personal scope..
+        //        await turnContext.SendActivityAsync($"In Group Chat or Personal Teams scope. Sending card to compose-only.");
+        //    }
+
+        //    return adaptiveCard.ToComposeExtensionResultResponse();
+        //}
 
         protected override async Task OnTeamsMessagingExtensionCardButtonClickedAsync(ITurnContext<IInvokeActivity> turnContext, JObject obj, CancellationToken cancellationToken)
         {

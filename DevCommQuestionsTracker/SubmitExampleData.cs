@@ -3,18 +3,17 @@
 
 namespace Microsoft.DevCommQuestionsTracker
 {
-    public class SubmitExampleData
+    public class QuestionData
     {
-        public string SubmitLocation { get; set; }
-
-        public string Question { get; set; }
-
-        public string MultiSelect { get; set; }
-
-        public string Option1 { get; set; }
-
-        public string Option2 { get; set; }
-
-        public string Option3 { get; set; }
+        public string messageId { get; set; }
+        public string Title { get; set; }
+        public string PostedDate { get; set; }
+        public string QuestionType { get; set; }
+        public string QuestionSubType { get; set; }
+        public string Forum { get; set; }
+        public string Status { get; set; }
+        public string Module { get; set; }
+        public string AssignedTo { get; set; }
+        public string Comments { get; set; }
     }
 }

@@ -40,7 +40,8 @@ namespace DevCommQuestionsTracker.Repository
 
         public async Task AddOrUpdateQuestionAsync(string id, Question question)
         {
-            throw new NotImplementedException();
+            var token = await _authProvider.GetAccessTokenAsync();
+            var allQuestiosn = await ExcelApiHelper.AddNewQuestionInExcel(token, question);
         }
 
         public async Task DeleteQuestionAsync(string id)
